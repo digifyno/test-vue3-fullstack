@@ -44,9 +44,9 @@ async function handleVerifyPin() {
   <div class="flex min-h-screen items-center justify-center bg-background p-4">
     <div class="w-full max-w-sm space-y-6">
       <div class="text-center">
-        <h1 class="text-2xl font-bold">Create account</h1>
+        <h1 class="text-2xl font-bold">Create your account</h1>
         <p class="mt-2 text-sm text-muted-foreground">
-          {{ step === 'info' ? 'Enter your details to get started' : 'Enter the code sent to your email' }}
+          {{ step === 'info' ? 'Join Test: Vue 3 Fullstack SaaS' : 'Enter the code sent to your email' }}
         </p>
       </div>
 

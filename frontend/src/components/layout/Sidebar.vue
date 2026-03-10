@@ -22,7 +22,7 @@ const icons: Record<string, string> = {
 <template>
   <aside class="flex w-64 flex-col border-r border-border bg-card">
     <div class="flex h-14 items-center border-b border-border px-4">
-      <h1 class="text-lg font-semibold">SaaS App</h1>
+      <h1 class="text-lg font-semibold">Test: Vue 3 Fullstack SaaS</h1>
     </div>
 
     <nav aria-label="Main navigation" class="flex-1 space-y-1 p-3">

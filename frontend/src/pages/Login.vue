@@ -43,7 +43,7 @@ async function handleVerifyPin() {
   <div class="flex min-h-screen items-center justify-center bg-background p-4">
     <div class="w-full max-w-sm space-y-6">
       <div class="text-center">
-        <h1 class="text-2xl font-bold">Sign in</h1>
+        <h1 class="text-2xl font-bold">Sign in to Test: Vue 3 Fullstack SaaS</h1>
         <p class="mt-2 text-sm text-muted-foreground">
           {{ step === 'email' ? 'Enter your email to receive a login code' : 'Enter the code sent to your email' }}
         </p>

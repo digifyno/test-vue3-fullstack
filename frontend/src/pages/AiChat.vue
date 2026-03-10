@@ -52,7 +52,7 @@ async function send() {
       class="flex-1 space-y-4 overflow-y-auto rounded-lg border border-border bg-card p-4"
     >
       <div v-if="messages.length === 0" class="flex h-full items-center justify-center">
-        <p class="text-muted-foreground">Start a conversation with the AI assistant</p>
+        <p class="text-muted-foreground">Start a conversation — ask anything about Vue 3, Fastify, or SaaS best practices</p>
       </div>
 
       <div
