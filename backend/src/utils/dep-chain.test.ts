@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { findDepChain } from './dep-chain.js';
+import { describe, it, expect, afterAll } from 'vitest';
+import { findDepChain, findDependentAgentSubTaskChain } from './dep-chain.js';
 
 describe('findDepChain', () => {
   it('returns only the item when parent is empty', () => {
@@ -98,5 +98,45 @@ describe('findDepChain', () => {
       { id: 'C', parentId: 'B' },
     ];
     expect(findDepChain(items, 'A')).toEqual([{ id: 'A', parentId: null }]);
+  });
+});
+
+describe('findDependentAgentSubTaskChain', () => {
+  const PREFIX = 'test_findDepChain parent status filter';
+  const createdIds: string[] = [];
+
+  afterAll(() => {
+    // Pure in-memory tests — no external resources to clean up.
+    createdIds.length = 0;
+  });
+
+  it('excludes completed/in_progress tasks and tasks behind a broken chain, includes pending/blocked direct dependents', () => {
+    const agentParentId = `${PREFIX} agent-parent`;
+
+    const rootTask = { id: `${PREFIX} root`, status: 'failed',      agentParentId, dependsOn: null };
+    const taskB    = { id: `${PREFIX} B`,    status: 'completed',   agentParentId, dependsOn: `${PREFIX} root` };
+    const taskC    = { id: `${PREFIX} C`,    status: 'pending',     agentParentId, dependsOn: `${PREFIX} B` };
+    const taskD    = { id: `${PREFIX} D`,    status: 'in_progress', agentParentId, dependsOn: `${PREFIX} root` };
+    const taskE    = { id: `${PREFIX} E`,    status: 'pending',     agentParentId, dependsOn: `${PREFIX} root` };
+    const taskF    = { id: `${PREFIX} F`,    status: 'blocked',     agentParentId, dependsOn: `${PREFIX} root` };
+
+    createdIds.push(rootTask.id, taskB.id, taskC.id, taskD.id, taskE.id, taskF.id);
+
+    const tasks = [rootTask, taskB, taskC, taskD, taskE, taskF];
+    const result = findDependentAgentSubTaskChain(rootTask.id, agentParentId, tasks);
+
+    const resultIds = result.map((t) => t.id);
+
+    // Included: pending/blocked direct dependents of root
+    expect(resultIds).toContain(taskE.id);
+    expect(resultIds).toContain(taskF.id);
+
+    // Excluded: completed (B), in_progress (D), and C (behind broken chain via B)
+    expect(resultIds).not.toContain(taskB.id);
+    expect(resultIds).not.toContain(taskC.id);
+    expect(resultIds).not.toContain(taskD.id);
+
+    // Exactly E and F — no extras
+    expect(result).toHaveLength(2);
   });
 });
