@@ -65,4 +65,53 @@ describe('findDepChain', () => {
     expect(result.length).toBeLessThanOrEqual(2);
     expect(result.some((item) => item.id === 'x')).toBe(true);
   });
+
+  it('returns chain from root to middle node (parent as startId)', () => {
+    const items = [
+      { id: 'a', parentId: null },
+      { id: 'b', parentId: 'a' },
+      { id: 'c', parentId: 'b' },
+    ];
+    // 'b' is a middle node — result should be [a, b], NOT including 'c'
+    expect(findDepChain(items, 'b')).toEqual([
+      { id: 'a', parentId: null },
+      { id: 'b', parentId: 'a' },
+    ]);
+  });
+
+  it('returns single-element chain when startId is the root node', () => {
+    const items = [
+      { id: 'root', parentId: null },
+      { id: 'child', parentId: 'root' },
+    ];
+    // Root has no parent, so chain is just [root]
+    expect(findDepChain(items, 'root')).toEqual([{ id: 'root', parentId: null }]);
+  });
+
+  it('preserves extra properties on items (generic type T)', () => {
+    const items = [
+      { id: '1', parentId: null, label: 'Root' },
+      { id: '2', parentId: '1', label: 'Child' },
+    ];
+    expect(findDepChain(items, '2')).toEqual([
+      { id: '1', parentId: null, label: 'Root' },
+      { id: '2', parentId: '1', label: 'Child' },
+    ]);
+  });
+
+  it('returns only the subchain up to a mid-tree parent in a large list', () => {
+    const items = [
+      { id: 'n1', parentId: null },
+      { id: 'n2', parentId: 'n1' },
+      { id: 'n3', parentId: 'n2' },
+      { id: 'n4', parentId: 'n3' },
+      { id: 'n5', parentId: 'n4' },
+    ];
+    // startId is 'n3' — should return [n1, n2, n3], not including n4 or n5
+    expect(findDepChain(items, 'n3')).toEqual([
+      { id: 'n1', parentId: null },
+      { id: 'n2', parentId: 'n1' },
+      { id: 'n3', parentId: 'n2' },
+    ]);
+  });
 });
