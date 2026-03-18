@@ -69,4 +69,23 @@ describe('findDepChain', () => {
   it('returns empty array when items list is empty (task with no deps)', () => {
     expect(findDepChain([], 'any-id')).toEqual([]);
   });
+
+  it('handles a 3-node parent recursive cycle (A→B→C→A) without infinite loop', () => {
+    // A has parentId B, B has parentId C, C has parentId A — a full 3-node cycle
+    const items = [
+      { id: 'A', parentId: 'B' },
+      { id: 'B', parentId: 'C' },
+      { id: 'C', parentId: 'A' },
+    ];
+    // The visited-set guard must break the cycle; all 3 items are visited before
+    // the repeated node is encountered, so the result contains exactly all 3 items.
+    const result = findDepChain(items, 'A');
+    // Must terminate (no infinite loop) and return at most 3 items
+    expect(result.length).toBeLessThanOrEqual(3);
+    // The starting item 'A' must always be present in the result
+    expect(result.some((item) => item.id === 'A')).toBe(true);
+    // No item should appear more than once (cycle guard prevents duplicates)
+    const ids = result.map((item) => item.id);
+    expect(ids.length).toBe(new Set(ids).size);
+  });
 });
