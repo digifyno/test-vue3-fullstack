@@ -65,4 +65,8 @@ describe('findDepChain', () => {
     expect(result.length).toBeLessThanOrEqual(2);
     expect(result.some((item) => item.id === 'x')).toBe(true);
   });
+
+  it('returns empty array when items list is empty (task with no deps)', () => {
+    expect(findDepChain([], 'any-id')).toEqual([]);
+  });
 });
