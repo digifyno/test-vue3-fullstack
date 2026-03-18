@@ -99,4 +99,17 @@ describe('findDepChain', () => {
     ];
     expect(findDepChain(items, 'A')).toEqual([{ id: 'A', parentId: null }]);
   });
+
+  it('returns [A, B] when task B depends on task A (B.parentId = A, A is root)', () => {
+    // Task B has parentId 'A'; task A is a root item (no parent).
+    // Starting from B, findDepChain should walk up to A and return the full chain [A, B].
+    const items = [
+      { id: 'A', parentId: null },
+      { id: 'B', parentId: 'A' },
+    ];
+    expect(findDepChain(items, 'B')).toEqual([
+      { id: 'A', parentId: null },
+      { id: 'B', parentId: 'A' },
+    ]);
+  });
 });
