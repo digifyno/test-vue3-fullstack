@@ -88,4 +88,15 @@ describe('findDepChain', () => {
     const ids = result.map((item) => item.id);
     expect(ids.length).toBe(new Set(ids).size);
   });
+
+  it('returns only task A when it is a root item even when its dependents are present in items', () => {
+    // Task A has no parent, but its children B and C appear in the items list.
+    // findDepChain walks UP the parentId chain only (ancestors), never down.
+    const items = [
+      { id: 'A', parentId: null },
+      { id: 'B', parentId: 'A' },
+      { id: 'C', parentId: 'B' },
+    ];
+    expect(findDepChain(items, 'A')).toEqual([{ id: 'A', parentId: null }]);
+  });
 });
