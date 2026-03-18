@@ -3,6 +3,13 @@ import { getPool } from '../database.js';
 
 export async function healthRoutes(app: FastifyInstance): Promise<void> {
   app.get('/api/health', async () => {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+    };
+  });
+
+  app.get('/api/health/deep', async () => {
     let dbOk = false;
     try {
       await getPool().query('SELECT 1');
