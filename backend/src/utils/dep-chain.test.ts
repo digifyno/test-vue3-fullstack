@@ -69,4 +69,15 @@ describe('findDepChain', () => {
   it('returns empty array when items list is empty (task with no deps)', () => {
     expect(findDepChain([], 'any-id')).toEqual([]);
   });
+
+  it('returns chain for item with direct parent (direct dependency)', () => {
+    const items = [
+      { id: 'parent-task', parentId: null },
+      { id: 'child-task', parentId: 'parent-task' },
+    ];
+    expect(findDepChain(items, 'child-task')).toEqual([
+      { id: 'parent-task', parentId: null },
+      { id: 'child-task', parentId: 'parent-task' },
+    ]);
+  });
 });
